@@ -72,9 +72,7 @@ export const BudgetsPage = () => {
                     </div>
 
                     <span className="budget-card__amount">
-                      {currency(
-                        'monthlyLimit' in budget ? budget.monthlyLimit : budget.limit
-                      )}
+                      {currency(budget.monthlyLimit)}
                     </span>
                   </div>
 

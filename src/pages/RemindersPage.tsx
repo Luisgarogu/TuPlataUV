@@ -28,7 +28,11 @@ export const RemindersPage = () => {
           </div>
 
           <div className="feature-topbar__right">
-            <button type="button" className="feature-header-btn feature-header-btn--orange">
+            <button
+              type="button"
+              className="feature-header-btn feature-header-btn--orange"
+              onClick={() => navigate('/reminders/new')}
+            >
               Nuevo recordatorio
             </button>
           </div>

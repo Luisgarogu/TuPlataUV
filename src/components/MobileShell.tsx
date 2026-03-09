@@ -1,5 +1,6 @@
 import { Bell, Settings, CircleHelp } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type MobileShellProps = {
   title: string;
@@ -14,6 +15,29 @@ export const MobileShell = ({
   children,
   showDashboardHeader = false,
 }: MobileShellProps) => {
+  const navigate = useNavigate();
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const notificationRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target as Node)
+      ) {
+        setNotificationsOpen(false);
+      }
+    };
+
+    if (notificationsOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [notificationsOpen]);
+
   return (
     <main className="mobile-shell">
       <div className="mobile-shell__inner">
@@ -31,13 +55,43 @@ export const MobileShell = ({
 
           {showDashboardHeader ? (
             <div className="mobile-header__actions">
-              <button type="button" className="icon-btn" aria-label="Notificaciones">
-                <Bell size={16} />
-              </button>
-              <button type="button" className="icon-btn" aria-label="Ayuda">
+              <div className="notification-wrap" ref={notificationRef}>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  aria-label="Notificaciones"
+                  onClick={() => setNotificationsOpen((prev) => !prev)}
+                >
+                  <Bell size={16} />
+                </button>
+
+                {notificationsOpen ? (
+                  <div className="notification-popover">
+                    <div className="notification-popover__title">
+                      Notificaciones
+                    </div>
+                    <div className="notification-popover__body">
+                      Sin novedades
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+
+              <button
+                type="button"
+                className="icon-btn"
+                aria-label="Ayuda"
+                onClick={() => navigate('/help')}
+              >
                 <CircleHelp size={16} />
               </button>
-              <button type="button" className="icon-btn" aria-label="Configuración">
+
+              <button
+                type="button"
+                className="icon-btn"
+                aria-label="Configuración"
+                onClick={() => navigate('/settings')}
+              >
                 <Settings size={16} />
               </button>
             </div>

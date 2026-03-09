@@ -12,7 +12,9 @@ import {
   TrendingUp,
   Wallet,
   CalendarDays,
+  X,
 } from 'lucide-react';
+import { useState } from 'react';
 import { ActionCard } from '../components/ActionCard';
 import { MobileShell } from '../components/MobileShell';
 import { useApp } from '../context/AppContext';
@@ -21,6 +23,8 @@ import '../styles/dashboard.css';
 
 export const DashboardPage = () => {
   const { movements } = useApp();
+  const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month'>('week');
+  const [showMonthlyNotice, setShowMonthlyNotice] = useState(false);
 
   const incomes = movements.filter((m) => m.kind === 'income');
   const expenses = movements.filter((m) => m.kind === 'expense');
@@ -42,6 +46,21 @@ export const DashboardPage = () => {
   const totalExpenseCount = expenses.length;
   const totalIncomeCount = incomes.length;
 
+  const handleWeekClick = () => {
+    setSelectedPeriod('week');
+    setShowMonthlyNotice(false);
+  };
+
+  const handleMonthClick = () => {
+    setSelectedPeriod('month');
+    setShowMonthlyNotice(true);
+  };
+
+  const closeMonthlyNotice = () => {
+    setShowMonthlyNotice(false);
+    setSelectedPeriod('week');
+  };
+
   return (
     <MobileShell
       title="Tu Plata, Sin Drama"
@@ -49,8 +68,21 @@ export const DashboardPage = () => {
       showDashboardHeader
     >
       <div className="dashboard-tabs">
-        <button className="dashboard-tab dashboard-tab--active">Esta Semana</button>
-        <button className="dashboard-tab">Este mes</button>
+        <button
+          className={`dashboard-tab ${selectedPeriod === 'week' ? 'dashboard-tab--active' : ''}`}
+          onClick={handleWeekClick}
+          type="button"
+        >
+          Esta Semana
+        </button>
+
+        <button
+          className={`dashboard-tab ${selectedPeriod === 'month' ? 'dashboard-tab--active' : ''}`}
+          onClick={handleMonthClick}
+          type="button"
+        >
+          Este mes
+        </button>
       </div>
 
       <div className="dashboard-stack">
@@ -182,6 +214,42 @@ export const DashboardPage = () => {
           colorClass="action-card__icon--orange"
         />
       </div>
+
+      {showMonthlyNotice ? (
+        <div className="dashboard-modal-overlay" onClick={closeMonthlyNotice}>
+          <div
+            className="dashboard-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="dashboard-modal__close"
+              onClick={closeMonthlyNotice}
+              aria-label="Cerrar"
+            >
+              <X size={16} />
+            </button>
+
+            <div className="dashboard-modal__icon">
+              <CalendarDays size={18} />
+            </div>
+
+            <h3>Resumen mensual no disponible</h3>
+            <p>
+              Aún no existen registros suficientes para generar un análisis mensual
+              confiable. Probablemente llevas poco tiempo usando la aplicación.
+            </p>
+
+            <button
+              type="button"
+              className="dashboard-modal__button"
+              onClick={closeMonthlyNotice}
+            >
+              Entendido
+            </button>
+          </div>
+        </div>
+      ) : null}
     </MobileShell>
   );
 };
