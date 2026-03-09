@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { ArrowLeft, Bell } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import '../styles/feature-pages.css';
