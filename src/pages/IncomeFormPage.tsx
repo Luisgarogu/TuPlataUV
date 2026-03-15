@@ -83,7 +83,10 @@ export const IncomeFormPage = () => {
       dateISO: new Date(date).toISOString(),
     });
 
-    navigate('/movements');
+    navigate('/movements', {
+      replace: true,
+      state: { fromCreatedMovement: true },
+    });
   };
 
   return (
@@ -140,9 +143,8 @@ export const IncomeFormPage = () => {
                   <button
                     key={item.value}
                     type="button"
-                    className={`choice-tile ${
-                      source === item.value ? 'choice-tile--selected' : ''
-                    }`}
+                    className={`choice-tile ${source === item.value ? 'choice-tile--selected' : ''
+                      }`}
                     onClick={() => setSource(item.value)}
                   >
                     <span className="choice-tile__emoji">{item.icon}</span>

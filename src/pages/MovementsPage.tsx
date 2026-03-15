@@ -1,6 +1,6 @@
 import { ArrowLeft, Pencil, Trash2, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { currency } from '../utils/format';
 import '../styles/feature-pages.css';
@@ -18,6 +18,7 @@ type UIMovement = {
 
 export const MovementsPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { movements } = useApp();
 
   const [filter, setFilter] = useState<FilterType>('all');
@@ -30,6 +31,14 @@ export const MovementsPage = () => {
   const [editDescription, setEditDescription] = useState('');
   const [editDate, setEditDate] = useState('');
 
+  const handleBack = () => {
+    if (location.state?.fromCreatedMovement) {
+      navigate('/dashboard');
+      return;
+    }
+
+    navigate(-1);
+  };
   useEffect(() => {
     const mapped: UIMovement[] = movements.map((movement, index) => ({
       uiId: `${movement.dateISO}-${movement.amount}-${movement.category}-${index}`,
@@ -127,11 +136,7 @@ export const MovementsPage = () => {
       <div className="feature-shell">
         <header className="feature-topbar">
           <div className="feature-topbar__left">
-            <button
-              className="feature-back"
-              onClick={() => navigate(-1)}
-              type="button"
-            >
+            <button className="feature-back" onClick={handleBack} type="button">
               <ArrowLeft size={14} />
             </button>
 

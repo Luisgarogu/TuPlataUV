@@ -82,7 +82,10 @@ export const ExpenseFormPage = () => {
       dateISO: new Date().toISOString(),
     });
 
-    navigate('/movements');
+    navigate('/movements', {
+      replace: true,
+      state: { fromCreatedMovement: true },
+    });
   };
 
   return (
@@ -139,9 +142,8 @@ export const ExpenseFormPage = () => {
                   <button
                     key={item.value}
                     type="button"
-                    className={`choice-tile ${
-                      category === item.value ? 'choice-tile--selected' : ''
-                    }`}
+                    className={`choice-tile ${category === item.value ? 'choice-tile--selected' : ''
+                      }`}
                     onClick={() => setCategory(item.value)}
                   >
                     <span className="choice-tile__emoji">{item.icon}</span>

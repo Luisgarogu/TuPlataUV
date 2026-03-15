@@ -1,13 +1,22 @@
 import { ArrowLeft, PiggyBank } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { currency } from '../utils/format';
 import '../styles/feature-pages.css';
 
 export const BudgetsPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { budgets } = useApp();
 
+  const handleBack = () => {
+  if (location.state?.fromCreatedBudget) {
+    navigate('/dashboard');
+    return;
+  }
+
+  navigate(-1);
+};
   return (
     <main className="feature-screen">
       <div className="feature-shell">
@@ -15,7 +24,7 @@ export const BudgetsPage = () => {
           <div className="feature-topbar__left">
             <button
               className="feature-back"
-              onClick={() => navigate(-1)}
+              onClick={handleBack}
               type="button"
             >
               <ArrowLeft size={14} />

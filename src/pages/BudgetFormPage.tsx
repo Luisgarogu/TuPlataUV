@@ -34,7 +34,10 @@ export const BudgetFormPage = () => {
       monthlyLimit: Number(limit.replace(/\D/g, '')) || 0,
     });
 
-    navigate('/budgets');
+    navigate('/budgets', {
+      replace: true,
+      state: { fromCreatedBudget: true },
+    });
   };
 
   return (
@@ -42,7 +45,11 @@ export const BudgetFormPage = () => {
       <div className="feature-shell">
         <header className="feature-topbar">
           <div className="feature-topbar__left">
-            <button className="feature-back" onClick={() => navigate(-1)} type="button">
+            <button
+              className="feature-back"
+              onClick={() => navigate('/dashboard')}
+              type="button"
+            >
               <ArrowLeft size={14} />
             </button>
 
