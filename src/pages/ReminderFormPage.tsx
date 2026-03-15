@@ -1,5 +1,5 @@
-import { FormEvent, useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { FormEvent, useRef, useState } from 'react';
+import { ArrowLeft, AlertTriangle, LoaderCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import '../styles/feature-pages.css';
@@ -19,9 +19,33 @@ export const ReminderFormPage = () => {
   const [date, setDate] = useState('');
   const [notifyWhen, setNotifyWhen] = useState<NotifyWhen>('El mismo día');
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showFailureModal, setShowFailureModal] = useState(false);
+
+  const failedOnceRef = useRef(false);
+
+  const closeFailureModal = () => {
+    setShowFailureModal(false);
+  };
+
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    // Primer intento: falla simulada
+    if (!failedOnceRef.current) {
+      failedOnceRef.current = true;
+      setIsSubmitting(false);
+      setShowFailureModal(true);
+      return;
+    }
+
+    // Segundo intento: guarda
     addReminder({
       title,
       amount: Number(amount.replace(/\D/g, '')) || 0,
@@ -29,6 +53,7 @@ export const ReminderFormPage = () => {
       notifyWhen,
     });
 
+    setIsSubmitting(false);
     navigate('/reminders');
   };
 
@@ -39,8 +64,9 @@ export const ReminderFormPage = () => {
           <div className="feature-topbar__left">
             <button
               className="feature-back"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate('/dashboard')}
               type="button"
+              disabled={isSubmitting}
             >
               <ArrowLeft size={14} />
             </button>
@@ -62,7 +88,8 @@ export const ReminderFormPage = () => {
             <button
               type="button"
               className="feature-header-btn feature-header-btn--orange"
-              onClick={() => navigate('/reminders')}
+              onClick={() => navigate('/dashboard')}
+              disabled={isSubmitting}
             >
               Cancelar
             </button>
@@ -82,6 +109,7 @@ export const ReminderFormPage = () => {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Ej: Arriendo, Netflix, etc."
                 required
+                disabled={isSubmitting}
               />
 
               <label>
@@ -93,6 +121,7 @@ export const ReminderFormPage = () => {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="150.000"
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -106,6 +135,7 @@ export const ReminderFormPage = () => {
                   onChange={(e) => setDate(e.target.value)}
                   required
                   className="reminder-date-input"
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -115,6 +145,7 @@ export const ReminderFormPage = () => {
                   value={notifyWhen}
                   onChange={(e) => setNotifyWhen(e.target.value as NotifyWhen)}
                   className="reminder-select"
+                  disabled={isSubmitting}
                 >
                   <option>El mismo día</option>
                   <option>1 día antes</option>
@@ -123,12 +154,52 @@ export const ReminderFormPage = () => {
                 </select>
               </div>
 
-              <button type="submit" className="feature-submit feature-submit--orange">
-                Crear recordatorio
+              <button
+                type="submit"
+                className="feature-submit feature-submit--orange reminder-submit-btn"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <span className="reminder-submit-btn__loading">
+                    <LoaderCircle size={16} className="spinner" />
+                    Guardando...
+                  </span>
+                ) : (
+                  'Crear recordatorio'
+                )}
               </button>
             </form>
           </div>
         </section>
+
+        {showFailureModal ? (
+          <div className="movement-modal-overlay" onClick={closeFailureModal}>
+            <div
+              className="movement-modal reminder-error-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="reminder-error-modal__icon">
+                <AlertTriangle size={22} />
+              </div>
+
+              <h3>Error de conexión</h3>
+              <p className="movement-modal__text">
+                No fue posible guardar el recordatorio por un problema temporal
+                de conexión con la base de datos. Inténtalo nuevamente.
+              </p>
+
+              <div className="movement-modal__actions">
+                <button
+                  type="button"
+                  className="movement-modal__btn movement-modal__btn--primary"
+                  onClick={closeFailureModal}
+                >
+                  Intentar de nuevo
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </main>
   );

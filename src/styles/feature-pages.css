@@ -992,3 +992,114 @@
   background: #ff5a5a;
   color: #fff;
 }
+
+.reminder-submit-btn:disabled,
+.feature-back:disabled,
+.feature-header-btn:disabled,
+.reminder-date-input:disabled,
+.reminder-select:disabled,
+.reminder-form-card .feature-form input:disabled {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+.reminder-submit-btn__loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.spinner {
+  animation: reminder-spin 0.9s linear infinite;
+}
+
+@keyframes reminder-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.reminder-error-modal {
+  max-width: 310px;
+  text-align: center;
+}
+
+.reminder-error-modal__icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  background: #fff3e8;
+  color: #ff7a00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+}
+
+.reminders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reminder-list-card {
+  background: #fff;
+  border: 1px solid #ffd7b0;
+  border-radius: 10px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.05);
+}
+
+.reminder-list-card__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #fff0df;
+  color: #ff7a00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reminder-list-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.reminder-list-card__content strong {
+  font-size: 13px;
+  color: #222;
+}
+
+.reminder-list-card__content span {
+  font-size: 12px;
+  color: #5f6670;
+}
+
+.reminder-list-card__content small {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #8a8a8a;
+}
+
+.reminder-list-card__tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: #ff7a00;
+  background: #fff3e8;
+  padding: 6px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}

@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { ArrowLeft, TrendingUp } from 'lucide-react';
+import { ArrowLeft, TrendingUp, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import '../styles/feature-pages.css';
@@ -17,20 +17,70 @@ export const IncomeFormPage = () => {
   const navigate = useNavigate();
   const { addMovement } = useApp();
 
-  const [amount, setAmount] = useState('50000');
-  const [source, setSource] = useState<IncomeSource>('Familia');
-  const [date, setDate] = useState('02 / 25 / 26');
+  const [amount, setAmount] = useState('');
+  const [source, setSource] = useState<IncomeSource | null>(null);
+  const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
+
+  const [showValidationModal, setShowValidationModal] = useState(false);
+  const [validationTitle, setValidationTitle] = useState('');
+  const [validationMessage, setValidationMessage] = useState('');
+
+  const openValidationModal = (title: string, message: string) => {
+    setValidationTitle(title);
+    setValidationMessage(message);
+    setShowValidationModal(true);
+  };
+
+  const closeValidationModal = () => {
+    setShowValidationModal(false);
+    setValidationTitle('');
+    setValidationMessage('');
+  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const cleanAmount = Number(amount.replace(/\D/g, ''));
+
+    if (!amount.trim()) {
+      openValidationModal(
+        'Falta el monto',
+        'Debes ingresar el valor del ingreso antes de continuar.'
+      );
+      return;
+    }
+
+    if (!cleanAmount || cleanAmount <= 0) {
+      openValidationModal(
+        'Monto inválido',
+        'Ingresa un monto mayor a cero para poder registrar el ingreso.'
+      );
+      return;
+    }
+
+    if (!source) {
+      openValidationModal(
+        'Falta la fuente del ingreso',
+        'Selecciona de dónde proviene el ingreso para continuar.'
+      );
+      return;
+    }
+
+    if (!date.trim()) {
+      openValidationModal(
+        'Falta la fecha',
+        'Debes ingresar la fecha del ingreso antes de guardarlo.'
+      );
+      return;
+    }
+
     addMovement({
       kind: 'income',
       category: source,
-      amount: Number(amount.replace(/\D/g, '')) || 0,
+      amount: cleanAmount,
       description,
-      dateISO: new Date().toISOString(),
+      dateISO: new Date(date).toISOString(),
     });
 
     navigate('/movements');
@@ -41,7 +91,11 @@ export const IncomeFormPage = () => {
       <div className="feature-shell">
         <header className="feature-topbar">
           <div className="feature-topbar__left">
-            <button className="feature-back" onClick={() => navigate(-1)} type="button">
+            <button
+              className="feature-back"
+              onClick={() => navigate(-1)}
+              type="button"
+            >
               <ArrowLeft size={14} />
             </button>
 
@@ -97,12 +151,14 @@ export const IncomeFormPage = () => {
                 ))}
               </div>
 
-              <label>Fecha</label>
+              <label>
+                Fecha <em>*</em>
+              </label>
 
               <input
+                type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                placeholder="02 / 25 / 26"
               />
 
               <label>
@@ -121,6 +177,41 @@ export const IncomeFormPage = () => {
             </form>
           </div>
         </section>
+
+        {showValidationModal ? (
+          <div className="movement-modal-overlay" onClick={closeValidationModal}>
+            <div
+              className="movement-modal expense-validation-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                className="movement-modal__close"
+                onClick={closeValidationModal}
+                aria-label="Cerrar"
+              >
+                ✕
+              </button>
+
+              <div className="expense-validation-modal__icon">
+                <XCircle size={22} />
+              </div>
+
+              <h3>{validationTitle}</h3>
+              <p className="movement-modal__text">{validationMessage}</p>
+
+              <div className="movement-modal__actions">
+                <button
+                  type="button"
+                  className="movement-modal__btn movement-modal__btn--primary"
+                  onClick={closeValidationModal}
+                >
+                  Entendido
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </main>
   );

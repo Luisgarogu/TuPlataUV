@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { ArrowLeft, DollarSign } from 'lucide-react';
+import { ArrowLeft, DollarSign, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import '../styles/feature-pages.css';
@@ -25,17 +25,59 @@ export const ExpenseFormPage = () => {
   const navigate = useNavigate();
   const { addMovement } = useApp();
 
-  const [amount, setAmount] = useState('15000');
-  const [category, setCategory] = useState<ExpenseCategory>('Alimentación');
+  const [amount, setAmount] = useState('');
+  const [category, setCategory] = useState<ExpenseCategory | null>(null);
   const [description, setDescription] = useState('');
+
+  const [showValidationModal, setShowValidationModal] = useState(false);
+  const [validationTitle, setValidationTitle] = useState('');
+  const [validationMessage, setValidationMessage] = useState('');
+
+  const openValidationModal = (title: string, message: string) => {
+    setValidationTitle(title);
+    setValidationMessage(message);
+    setShowValidationModal(true);
+  };
+
+  const closeValidationModal = () => {
+    setShowValidationModal(false);
+    setValidationTitle('');
+    setValidationMessage('');
+  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const cleanAmount = Number(amount.replace(/\D/g, ''));
+
+    if (!amount.trim()) {
+      openValidationModal(
+        'Falta el monto',
+        'Debes ingresar el valor del gasto antes de continuar.'
+      );
+      return;
+    }
+
+    if (!cleanAmount || cleanAmount <= 0) {
+      openValidationModal(
+        'Monto inválido',
+        'Ingresa un monto mayor a cero para poder registrar el gasto.'
+      );
+      return;
+    }
+
+    if (!category) {
+      openValidationModal(
+        'Falta la categoría',
+        'Selecciona una categoría para clasificar correctamente este gasto.'
+      );
+      return;
+    }
+
     addMovement({
       kind: 'expense',
       category,
-      amount: Number(amount.replace(/\D/g, '')) || 0,
+      amount: cleanAmount,
       description,
       dateISO: new Date().toISOString(),
     });
@@ -48,7 +90,11 @@ export const ExpenseFormPage = () => {
       <div className="feature-shell">
         <header className="feature-topbar">
           <div className="feature-topbar__left">
-            <button className="feature-back" onClick={() => navigate(-1)} type="button">
+            <button
+              className="feature-back"
+              onClick={() => navigate(-1)}
+              type="button"
+            >
               <ArrowLeft size={14} />
             </button>
 
@@ -120,6 +166,41 @@ export const ExpenseFormPage = () => {
             </form>
           </div>
         </section>
+
+        {showValidationModal ? (
+          <div className="movement-modal-overlay" onClick={closeValidationModal}>
+            <div
+              className="movement-modal expense-validation-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                className="movement-modal__close"
+                onClick={closeValidationModal}
+                aria-label="Cerrar"
+              >
+                ✕
+              </button>
+
+              <div className="expense-validation-modal__icon">
+                <XCircle size={22} />
+              </div>
+
+              <h3>{validationTitle}</h3>
+              <p className="movement-modal__text">{validationMessage}</p>
+
+              <div className="movement-modal__actions">
+                <button
+                  type="button"
+                  className="movement-modal__btn movement-modal__btn--primary"
+                  onClick={closeValidationModal}
+                >
+                  Entendido
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </main>
   );
