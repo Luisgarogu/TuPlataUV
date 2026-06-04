@@ -14,7 +14,7 @@ const faqItems: FaqItem[] = [
   {
     question: '¿Cómo registro un gasto?',
     answer:
-      'Ve a “Registrar Gasto”, completa el monto, selecciona la categoría y agrega una descripción si lo necesitas. Luego pulsa “Guardar Gasto”.',
+      'Ve a “Registrar gasto”, completa el monto, selecciona la categoría y agrega una descripción si lo necesitas. Luego pulsa “Guardar gasto”.',
   },
   {
     question: '¿Cómo creo un presupuesto?',

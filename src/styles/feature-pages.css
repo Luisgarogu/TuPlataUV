@@ -1040,6 +1040,23 @@
   margin: 0 auto 14px;
 }
 
+.expense-success-modal {
+  max-width: 310px;
+  text-align: center;
+}
+
+.expense-success-modal__icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  background: #e7f7f1;
+  color: #10b08d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+}
+
 .reminders-list {
   display: flex;
   flex-direction: column;

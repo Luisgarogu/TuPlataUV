@@ -109,7 +109,7 @@ export const IncomeOnboardingPage = () => {
           <label>Fecha</label>
           <input value={date} onChange={(e) => setDate(e.target.value)} />
 
-          <label>Descripcion <small>(opcional)</small></label>
+          <label>Descripción <small>(opcional)</small></label>
           <input
             value={description}
             onChange={(e) => setDescription(e.target.value)}

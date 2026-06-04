@@ -321,7 +321,7 @@ export const MovementsPage = () => {
                 ¿Estás seguro que deseas eliminar este movimiento de <strong>{deletingMovement.category}</strong>?
                 <br />
                 <br />
-                Esta accion es irreversible
+                Esta acción no se puede deshacer.
               </p>
 
               <div className="movement-modal__actions">
