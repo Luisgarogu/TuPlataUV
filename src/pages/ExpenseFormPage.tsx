@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { ArrowLeft, DollarSign, XCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, DollarSign, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import '../styles/feature-pages.css';
@@ -32,6 +32,8 @@ export const ExpenseFormPage = () => {
   const [showValidationModal, setShowValidationModal] = useState(false);
   const [validationTitle, setValidationTitle] = useState('');
   const [validationMessage, setValidationMessage] = useState('');
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const openValidationModal = (title: string, message: string) => {
     setValidationTitle(title);
@@ -82,6 +84,10 @@ export const ExpenseFormPage = () => {
       dateISO: new Date().toISOString(),
     });
 
+    setShowSuccessModal(true);
+  };
+
+  const goToMovements = () => {
     navigate('/movements', {
       replace: true,
       state: { fromCreatedMovement: true },
@@ -163,7 +169,7 @@ export const ExpenseFormPage = () => {
               />
 
               <button type="submit" className="feature-submit">
-                Guardar Gasto
+                Guardar gasto
               </button>
             </form>
           </div>
@@ -198,6 +204,34 @@ export const ExpenseFormPage = () => {
                   onClick={closeValidationModal}
                 >
                   Entendido
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {showSuccessModal ? (
+          <div className="movement-modal-overlay" onClick={goToMovements}>
+            <div
+              className="movement-modal expense-validation-modal expense-success-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="expense-success-modal__icon">
+                <CheckCircle2 size={22} />
+              </div>
+
+              <h3>Gasto guardado</h3>
+              <p className="movement-modal__text">
+                Tu gasto quedó registrado y ya aparece en tus movimientos.
+              </p>
+
+              <div className="movement-modal__actions">
+                <button
+                  type="button"
+                  className="movement-modal__btn movement-modal__btn--primary"
+                  onClick={goToMovements}
+                >
+                  Ver movimientos
                 </button>
               </div>
             </div>

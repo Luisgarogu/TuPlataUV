@@ -88,7 +88,7 @@ export const ExpenseOnboardingPage = () => {
           </div>
 
           <label>
-            Categoria <em>*</em>
+            Categoría <em>*</em>
           </label>
 
           <div className="choice-grid choice-grid--two">
@@ -107,7 +107,7 @@ export const ExpenseOnboardingPage = () => {
             ))}
           </div>
 
-          <label>Descripcion <small>(opcional)</small></label>
+          <label>Descripción <small>(opcional)</small></label>
           <input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
